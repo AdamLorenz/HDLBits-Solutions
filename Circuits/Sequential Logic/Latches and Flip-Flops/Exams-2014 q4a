@@ -1,0 +1,21 @@
+module top_module (
+    input clk,
+    input w, R, E, L,
+    output Q
+);
+	wire w_mux0;
+    wire w_mux1;
+    always @(*) begin
+        case(E)
+            1'b0: w_mux0 <= Q;
+            1'b1: w_mux0 <= w;
+        endcase
+        case(L)
+            1'b0: w_mux1 <= w_mux0;
+            1'b1: w_mux1 <= R;
+        endcase
+    end
+    always @(posedge clk) begin
+        Q <= w_mux1;
+    end
+endmodule
