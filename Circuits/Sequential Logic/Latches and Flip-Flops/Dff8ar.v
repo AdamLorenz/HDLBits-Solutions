@@ -6,7 +6,7 @@ module top_module (
 );
     always @(posedge clk, posedge areset) begin
         if(areset == 1'b1) begin
-            q <= 1'b0;
+            q <= '0;
         end else begin
             q <= d;
         end
