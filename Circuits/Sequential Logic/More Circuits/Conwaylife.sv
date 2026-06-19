@@ -22,8 +22,8 @@ module top_module(
         end
 
 		// Calculate number of neighbors for each index:
-        for(int r = 0; r < 16; r++) begin
-            for(int c = 0; c < 16; c++) begin
+        for (int r = 0; r < 16; r++) begin
+            for (int c = 0; c < 16; c++) begin
             	int count;
 				/* count = 	  q2d[up][left] 	+ q2d[up][mid] 		+ q2d[up][right]
 							+ q2d[mid][left] 						+ q2d[mid][right]
