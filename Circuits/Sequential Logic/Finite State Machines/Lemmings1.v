@@ -15,7 +15,7 @@ module top_module(
         // State transition logic
         case(state)
             LEFT:	  next_state = bump_left  ? RIGHT : LEFT;
-            RIGHT:	  next_state = bump_right ? LEFT : RIGHT;
+            RIGHT:    next_state = bump_right ? LEFT : RIGHT;
         endcase
     end
 
