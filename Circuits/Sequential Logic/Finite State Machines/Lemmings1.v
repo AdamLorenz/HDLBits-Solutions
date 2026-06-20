@@ -7,7 +7,7 @@ module top_module(
     output walk_right); //  
 
     parameter 	LEFT  = 1'b0, 
-          			RIGHT = 1'b1;
+          		RIGHT = 1'b1;
     reg state; 
     wire next_state;
 
@@ -15,14 +15,14 @@ module top_module(
         // State transition logic
         case(state)
             LEFT:	  next_state = bump_left  ? RIGHT : LEFT;
-            RIGHT:	next_state = bump_right ? LEFT : RIGHT;
+            RIGHT:	  next_state = bump_right ? LEFT : RIGHT;
         endcase
     end
 
     always @(posedge clk, posedge areset) begin
         // State flip-flops with asynchronous reset
         if (areset) state <= LEFT;
-        else		    state <= next_state;
+        else		state <= next_state;
     end
 
     // Output logic
