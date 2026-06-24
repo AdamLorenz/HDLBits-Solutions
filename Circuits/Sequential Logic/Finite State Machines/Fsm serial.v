@@ -2,43 +2,54 @@ module top_module(
     input clk,
     input in,
     input reset,    // Synchronous reset
-    output done
+    output reg done
 ); 
-    parameter   IDLE = 2'd0,
-    			DATA = 2'd1,
-    			DONE = 2'd2; 
-    reg  [1:0] state;
-    wire [1:0] next_state;
-    int count;
-    
+    parameter 	IDLE  = 3'd0,
+    			START = 3'd1,
+    			DATA  = 3'd2,
+    			STOP  = 3'd3,
+    			WAIT  = 3'd4;
+    reg  [3:0] state;
+    wire [3:0] next_state;
+    reg  [3:0] count;
+
     always @(*) begin
         case(state)
-            IDLE:	next_state = in ? IDLE : DATA;
-            DATA: begin
-                if 		(count < 8) 		next_state = DATA;
-                else if (count == 8 && in)  next_state = DONE;
-                else if (in) 				next_state = IDLE;
-                else 						next_state = DATA;
+            IDLE:	next_state = in ? IDLE : START;
+            START: 	next_state = DATA;
+            DATA:	begin
+                if (count == 8) begin
+                    if (in) next_state = STOP;
+                    else	next_state = WAIT;
+                end 
+                else next_state = DATA;
             end
-            DONE:	next_state = ~in ? DATA : IDLE;
+            STOP:	next_state = in ? IDLE : START;
+            WAIT: 	next_state = in ? IDLE : WAIT;
         endcase
     end
     
     always @(posedge clk) begin
-        if (reset) begin
-            state <= IDLE;
-            count <= 0;
-        end
-        else if (state == DATA) begin
-            count <=  count + 1;
-            state <= next_state;
-        end
-        else begin
-            state <= next_state;
-            count <= 0;
-        end
+        if (reset)	state <= IDLE;
+        else 		state <= next_state;
     end
     
-    assign done = (state == DONE);
-    
+    always @(posedge clk) begin
+        if (reset) begin 
+            count <= '0;
+            done <= 1'b0;
+        end
+        else if (next_state == DATA) begin
+            count <= count + 1'b1;
+            done <= 0;
+        end
+        else if (next_state == STOP) begin
+            count <= '0;
+            done <= 1'b1;
+        end
+        else begin
+            count <= '0;
+            done <= 1'b0;
+        end
+    end
 endmodule
