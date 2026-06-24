@@ -5,16 +5,14 @@ module top_module (
     output z
 ); 
 	parameter 	START 	= 2'd0,
-    			CARRY 	= 2'd1,
-    			ZERO 	= 2'd2,
-    			ONE	 	= 2'd3;
-    reg [1:0] state;
+    			ZERO 	= 2'd1,
+    			ONE	 	= 2'd2;
+    reg  [1:0] state;
     wire [1:0] next_state;
     
     always @(*) begin
         case(state)
-            START: 	next_state = x ? ONE  : CARRY;
-            CARRY:	next_state = x ? ONE  : CARRY;
+            START:	next_state = x ? ONE  : START;
             ZERO:	next_state = x ? ZERO : ONE;
             ONE:	next_state = x ? ZERO : ONE;
         endcase
