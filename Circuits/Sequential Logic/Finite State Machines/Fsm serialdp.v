@@ -8,23 +8,24 @@ module top_module(
     parameter 	IDLE  	= 3'd0,
     			START 	= 3'd1,
     			DATA  	= 3'd2,
+    			PARITY 	= 3'd3,
     			STOP  	= 3'd4,
     			WAIT  	= 3'd5;
     reg  [2:0] state;
     wire [2:0] next_state;
     reg  [3:0] count;
+	wire parity_check;
+    wire parity_reset;
     
     always @(*) begin
         case(state)
             IDLE:	next_state = in ? IDLE : START;
             START: 	next_state = DATA;
             DATA:	begin
-                if (count == 8) begin
-                    if (in) next_state = STOP;
-                    else 	next_state = WAIT;
-                end
+                if (count == 8) next_state = PARITY;
                 else next_state = DATA;
             end
+            PARITY: next_state = in ? STOP : WAIT;
             STOP:	next_state = in ? IDLE : START;
             WAIT: 	next_state = in ? IDLE : WAIT;
         endcase
@@ -47,8 +48,8 @@ module top_module(
                     out_byte <= {in, out_byte[7:1]};
                 end
         		STOP: begin
-                    if (in) done <= 1'b1;
-                    else 	done <= 1'b0;
+                    if (parity_check && in) done <= 1'b1;
+                    else 					done <= 1'b0;
                 end
                 default: begin
                     count <= '0;
@@ -57,4 +58,12 @@ module top_module(
             endcase
         end
     end
+    
+    assign parity_reset = (state == STOP || state == IDLE);
+    parity checkpar(
+        .clk(clk),
+        .reset(parity_reset),
+        .in(in),
+        .odd(parity_check)
+    );
 endmodule
