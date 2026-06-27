@@ -23,13 +23,13 @@ module top_module(
         // State transition logic
         case(state)
             LEFT: begin
-                if (!ground)		next_state = FALL_L;
+                if      (!ground)	next_state = FALL_L;
                 else if (dig) 		next_state = DIG_L;
                 else if (bump_left)	next_state = RIGHT;
                 else 				next_state = LEFT;
             end
             RIGHT:	begin
-                if (!ground)			next_state = FALL_R;
+                if      (!ground)		next_state = FALL_R;
                 else if (dig) 			next_state = DIG_R;
                 else if (bump_right)	next_state = LEFT;
                 else					next_state = RIGHT;
